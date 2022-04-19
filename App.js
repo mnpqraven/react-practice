@@ -114,20 +114,31 @@ const App = () => {
   const [translateText, setTranslateText] = useState('');
 
   //API
-  //TODO
+  //TODO: understand this mess
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [metaTitle, setMetaTitle] = useState([]);
+  const [metaDescription, setMetaDescription] = useState([]);
+  const [bulk, setBulk] = useState([]);
   const getMovies = async () => {
     try {
-      const resonse = await fetch('https://reactnative.dev/movies.json');
-      const json = await resonse.json();
+      //fetch in useEffect()
+      const response = await fetch('https://reactnative.dev/movies.json');
+      //converts to json object
+      const json = await response.json();
+      //saves data to setData
       setData(json.movies);
+      setMetaDescription(json.description);
+      setMetaTitle(json.title);
+      //still works, call the outer vars like bulk.title or bulk.description
+      setBulk(json);
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
+  //side effect in function components
   useEffect(() => {
     getMovies();
   });
@@ -193,13 +204,58 @@ const App = () => {
         </View>
       </ScrollView>
       <View style={styles.buttonContainer}>
-        <Button title="grab api"></Button>
+        <Button
+          title="grab api"
+          onPress={() =>
+            Alert.alert(
+              'API Call Requested',
+              'You requested ' +
+                data[0].title.toString() +
+                ' from ' +
+                data[0].releaseYear.toString(),
+              [
+                {
+                  text: 'alt calls',
+                  onPress: () => {
+                    Alert.alert(
+                      'using bulk instead of specific calls',
+                      bulk.movies[0].title,
+                      [],
+                      {
+                        cancelable: true,
+                      },
+                    );
+                  },
+                },
+                {
+                  text: 'Show description',
+                  onPress: () => {
+                    Alert.alert('Description', metaDescription, [], {
+                      cancelable: true,
+                    });
+                  },
+                },
+                {
+                  text: 'Show title',
+                  onPress: () => {
+                    Alert.alert('Title', metaTitle, [], {
+                      cancelable: true,
+                    });
+                  },
+                },
+              ],
+              {
+                cancelable: true,
+              },
+            )
+          }
+        />
         <FlatList
           data={data}
           keyExtractor={({id}, index) => id}
           renderItem={({item}, index) => (
             <Text>
-              {item.title}, {item.releaseYear}
+              {item.id}, {item.title}, {item.releaseYear}
             </Text>
           )}
         />
