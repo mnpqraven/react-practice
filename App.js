@@ -143,6 +143,23 @@ const App = () => {
     getMovies();
   });
 
+  const printConsole = () => {
+    console.log('Use this to debug');
+  }
+
+  const RenderMovies = () => {
+    return (
+    <FlatList
+      data={data}
+      keyExtractor={({id}, index) => id}
+      renderItem={({item}, index) => (
+        <Text>
+          {item.id}, {item.title}, {item.releaseYear}
+        </Text>
+      )}
+    />
+  )};
+
   //DISPLAY
   return (
     <SafeAreaView style={styles.container}>
@@ -202,6 +219,10 @@ const App = () => {
         <View style={styles.buttonContainer}>
           <Button onPress={_onPressButton} title="custom alert" />
         </View>
+        <Text>metaDescription returns: {metaDescription}{"\n"}
+        metaTitle returns: {metaTitle}{"\n"}
+        bulk.title returns: {bulk.title}{"\n"}
+        </Text>
       </ScrollView>
       <View style={styles.buttonContainer}>
         <Button
@@ -250,15 +271,8 @@ const App = () => {
             )
           }
         />
-        <FlatList
-          data={data}
-          keyExtractor={({id}, index) => id}
-          renderItem={({item}, index) => (
-            <Text>
-              {item.id}, {item.title}, {item.releaseYear}
-            </Text>
-          )}
-        />
+        <RenderMovies />
+        <Button onPress={() => printConsole()} title="debug console"/>
       </View>
     </SafeAreaView>
   );
